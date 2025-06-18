@@ -16,6 +16,11 @@ type Config struct {
 
 	MastodonStreamingURL string `env:"MASTODON_STREAMING_URL,default=https://techhub.social/api/v1/streaming/public"`
 	MastodonAccessToken  string `env:"MASTODON_ACCESS_TOKEN,required"`
+
+	PubSubHost     string `env:"PUBSUB_HOST,default=localhost"`
+	PubSubPort     uint16 `env:"PUBSUB_PORT,default=1883"`
+	PubSubClientID string `env:"PUBSUB_CLIENT_ID,default=mastodon-aggregator"`
+	PubSubQoS      byte   `env:"PUBSUB_QOS,default=1"`
 }
 
 func LoadConfig(ctx context.Context) (*Config, error) {

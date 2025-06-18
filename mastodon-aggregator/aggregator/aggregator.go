@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/alexchebotarsky/social/mastodon-aggregator/aggregator/event"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/aggregator/handler"
 )
 
 type Aggregator struct {
@@ -17,11 +18,16 @@ type Aggregator struct {
 
 type Clients struct {
 	Mastodon MastodonClient
+	PubSub   PubSubClient
 }
 
 type MastodonClient interface {
 	SubscribeEvent(ctx context.Context, eventType string, handler event.Handler)
 	Listen() error
+}
+
+type PubSubClient interface {
+	handler.PostSavePublisher
 }
 
 func New(clients Clients) (*Aggregator, error) {

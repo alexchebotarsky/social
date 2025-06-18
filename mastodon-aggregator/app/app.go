@@ -11,6 +11,7 @@ import (
 	"github.com/alexchebotarsky/social/mastodon-aggregator/aggregator"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/client"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/client/mastodon"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/client/pubsub"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/env"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/server"
 )
@@ -99,7 +100,10 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 	services = append(services, server)
 
 	// Aggregator service that collects and processes data
-	aggregator, err := aggregator.New(aggregator.Clients{Mastodon: clients.Mastodon})
+	aggregator, err := aggregator.New(aggregator.Clients{
+		Mastodon: clients.Mastodon,
+		PubSub:   clients.PubSub,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("error creating aggregator: %v", err)
 	}
@@ -111,6 +115,7 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 // Clients holds implementations of all external clients used in the app
 type Clients struct {
 	Mastodon *mastodon.Client
+	PubSub   *pubsub.PubSub
 }
 
 func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
@@ -120,6 +125,11 @@ func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
 	c.Mastodon, err = mastodon.New(env.MastodonStreamingURL, env.MastodonAccessToken)
 	if err != nil {
 		return nil, fmt.Errorf("error creating Mastodon client: %v", err)
+	}
+
+	c.PubSub, err = pubsub.New(ctx, env.PubSubHost, env.PubSubPort, env.PubSubClientID, env.PubSubQoS)
+	if err != nil {
+		return nil, fmt.Errorf("error creating PubSub client: %v", err)
 	}
 
 	return &c, nil

@@ -9,6 +9,6 @@ func (a *Aggregator) setupEvents() {
 	a.handle(event.Event{
 		Name:    "PostSave",
 		Type:    "update",
-		Handler: handler.PostSave(),
+		Handler: handler.PostSave(a.Clients.PubSub),
 	})
 }
