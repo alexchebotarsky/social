@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/alexchebotarsky/social/mastodon-aggregator/aggregator/event"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/aggregator/handler"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/service/aggregator/event"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/service/aggregator/handler"
 )
 
 type Aggregator struct {

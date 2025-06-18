@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/alexchebotarsky/social/mastodon-aggregator/aggregator/event"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/post"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/model/post"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/service/aggregator/event"
 )
 
 type PostSavePublisher interface {

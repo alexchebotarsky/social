@@ -8,12 +8,12 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/alexchebotarsky/social/mastodon-aggregator/aggregator"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/client"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/client/mastodon"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/client/pubsub"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/env"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/server"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/service/aggregator"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/service/server"
 )
 
 type App struct {

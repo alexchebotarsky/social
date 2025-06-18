@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/alexchebotarsky/social/mastodon-aggregator/server/handler"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/service/server/handler"
 )
 
 func (s *Server) setupRoutes() {

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/alexchebotarsky/social/mastodon-aggregator/post"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/model/post"
 )
 
 func (ps *PubSub) PublishPostSave(ctx context.Context, post *post.Post) error {
