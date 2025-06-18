@@ -1,4 +1,17 @@
 services:
+  mastodon-aggregator:
+    build: ./mastodon-aggregator/
+    depends_on:
+      - mosquitto
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+    ports:
+      - "8000:8000"
+    networks:
+      - network
+    restart: on-failure
+
   mosquitto:
     image: eclipse-mosquitto:2.0.21
     restart: on-failure
@@ -10,6 +23,7 @@ services:
       - mosquitto-data:/mosquitto/data
     networks:
       - network
+
 networks:
   network:
     driver: bridge
