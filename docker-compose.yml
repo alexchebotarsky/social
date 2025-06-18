@@ -6,6 +6,8 @@ services:
     environment:
       - HOST=0.0.0.0
       - PORT=8000
+      - MASTODON_STREAMING_URL=https://techhub.social/api/v1/streaming/public
+      - MASTODON_ACCESS_TOKEN=INSERT_ACCESS_TOKEN_HERE
     ports:
       - "8000:8000"
     networks:

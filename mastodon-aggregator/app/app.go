@@ -8,7 +8,9 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/alexchebotarsky/social/mastodon-aggregator/aggregator"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/client"
+	"github.com/alexchebotarsky/social/mastodon-aggregator/client/mastodon"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/env"
 	"github.com/alexchebotarsky/social/mastodon-aggregator/server"
 )
@@ -96,15 +98,29 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 	}
 	services = append(services, server)
 
+	// Aggregator service that collects and processes data
+	aggregator, err := aggregator.New(aggregator.Clients{Mastodon: clients.Mastodon})
+	if err != nil {
+		return nil, fmt.Errorf("error creating aggregator: %v", err)
+	}
+	services = append(services, aggregator)
+
 	return services, nil
 }
 
 // Clients holds implementations of all external clients used in the app
 type Clients struct {
+	Mastodon *mastodon.Client
 }
 
 func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
 	var c Clients
+	var err error
+
+	c.Mastodon, err = mastodon.New(env.MastodonStreamingURL, env.MastodonAccessToken)
+	if err != nil {
+		return nil, fmt.Errorf("error creating Mastodon client: %v", err)
+	}
 
 	return &c, nil
 }
