@@ -6,16 +6,27 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/alexchebotarsky/social/social-aggregator/service/server/handler"
 )
 
 type Server struct {
-	Host   string
-	Port   uint16
-	Router *http.ServeMux
-	HTTP   *http.Server
+	Host    string
+	Port    uint16
+	Router  *http.ServeMux
+	HTTP    *http.Server
+	Clients Clients
 }
 
-func New(host string, port uint16) *Server {
+type Clients struct {
+	Database Database
+}
+
+type Database interface {
+	handler.PostsSelector
+}
+
+func New(host string, port uint16, clients Clients) *Server {
 	var s Server
 
 	s.Host = host
@@ -27,6 +38,7 @@ func New(host string, port uint16) *Server {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 5 * time.Second,
 	}
+	s.Clients = clients
 
 	s.setupRoutes()
 

@@ -29,6 +29,11 @@ services:
       - PUBSUB_PORT=1883
       - PUBSUB_CLIENT_ID=social-aggregator
       - PUBSUB_QOS=1
+      - DATABASE_PATH=/database/sqlite.db
+    ports:
+      - "8001:8001"
+    volumes:
+      - database-data:/database
     networks:
       - network
     restart: on-failure
@@ -50,4 +55,6 @@ networks:
     driver: bridge
 volumes:
   mosquitto-data:
+    driver: local
+  database-data:
     driver: local

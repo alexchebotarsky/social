@@ -18,6 +18,8 @@ type Config struct {
 	PubSubPort     uint16 `env:"PUBSUB_PORT,default=1883"`
 	PubSubClientID string `env:"PUBSUB_CLIENT_ID,default=social-aggregator"`
 	PubSubQoS      byte   `env:"PUBSUB_QOS,default=1"`
+
+	DatabasePath string `env:"DATABASE_PATH,default=./sqlite.db"`
 }
 
 func LoadConfig(ctx context.Context) (*Config, error) {

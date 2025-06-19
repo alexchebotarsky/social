@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/alexchebotarsky/social/social-aggregator/client"
+	"github.com/alexchebotarsky/social/social-aggregator/client/database"
 	"github.com/alexchebotarsky/social/social-aggregator/client/pubsub"
 	"github.com/alexchebotarsky/social/social-aggregator/env"
 	"github.com/alexchebotarsky/social/social-aggregator/service/processor"
@@ -92,7 +93,9 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 	var services []Service
 
 	// Main HTTP server for communicating with the app
-	server := server.New(env.Host, env.Port)
+	server := server.New(env.Host, env.Port, server.Clients{
+		Database: clients.Database,
+	})
 	services = append(services, server)
 
 	// Processor that handles incoming messages from ingestors
@@ -106,7 +109,8 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 
 // Clients holds implementations of all external clients used in the app
 type Clients struct {
-	PubSub *pubsub.PubSub
+	PubSub   *pubsub.PubSub
+	Database *database.Client
 }
 
 func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
@@ -116,6 +120,11 @@ func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
 	c.PubSub, err = pubsub.New(ctx, env.PubSubHost, env.PubSubPort, env.PubSubClientID, env.PubSubQoS)
 	if err != nil {
 		return nil, fmt.Errorf("error creating PubSub client: %v", err)
+	}
+
+	c.Database, err = database.New(ctx, env.DatabasePath)
+	if err != nil {
+		return nil, fmt.Errorf("error creating database client: %v", err)
 	}
 
 	return &c, nil
