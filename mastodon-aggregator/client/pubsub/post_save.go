@@ -8,7 +8,7 @@ import (
 	"github.com/alexchebotarsky/social/mastodon-aggregator/model/post"
 )
 
-func (ps *PubSub) PublishPostSave(ctx context.Context, post *post.Post) error {
+func (ps *Client) PublishPostSave(ctx context.Context, post *post.Post) error {
 	data, err := json.Marshal(post)
 	if err != nil {
 		return fmt.Errorf("error marshalling post: %v", err)

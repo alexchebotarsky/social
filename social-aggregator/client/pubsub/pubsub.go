@@ -10,7 +10,7 @@ import (
 	"github.com/eclipse/paho.golang/paho"
 )
 
-type PubSub struct {
+type Client struct {
 	ClientID string
 	QoS      byte
 
@@ -18,8 +18,8 @@ type PubSub struct {
 	connManager   *autopaho.ConnectionManager
 }
 
-func New(ctx context.Context, host string, port uint16, clientID string, qos byte) (*PubSub, error) {
-	var p PubSub
+func New(ctx context.Context, host string, port uint16, clientID string, qos byte) (*Client, error) {
+	var p Client
 	var err error
 
 	p.ClientID = clientID
@@ -56,7 +56,7 @@ func New(ctx context.Context, host string, port uint16, clientID string, qos byt
 	return &p, nil
 }
 
-func (p *PubSub) Close(ctx context.Context) error {
+func (p *Client) Close(ctx context.Context) error {
 	err := p.connManager.Disconnect(ctx)
 	if err != nil {
 		return fmt.Errorf("error disconnecting: %v", err)
@@ -65,7 +65,7 @@ func (p *PubSub) Close(ctx context.Context) error {
 	return nil
 }
 
-func (p *PubSub) Subscribe(ctx context.Context, topic string, handler func(ctx context.Context, payload []byte) error) error {
+func (p *Client) Subscribe(ctx context.Context, topic string, handler func(ctx context.Context, payload []byte) error) error {
 	p.subscriptions[topic] = handler
 
 	_, err := p.connManager.Subscribe(ctx, &paho.Subscribe{
@@ -80,7 +80,7 @@ func (p *PubSub) Subscribe(ctx context.Context, topic string, handler func(ctx c
 	return nil
 }
 
-func (p *PubSub) handleMessage(message paho.PublishReceived) (bool, error) {
+func (p *Client) handleMessage(message paho.PublishReceived) (bool, error) {
 	for topic, handler := range p.subscriptions {
 		if message.Packet.Topic == topic {
 			err := handler(context.Background(), message.Packet.Payload)
@@ -93,6 +93,6 @@ func (p *PubSub) handleMessage(message paho.PublishReceived) (bool, error) {
 	return true, nil
 }
 
-func (p *PubSub) handleConnectError(err error) {
+func (p *Client) handleConnectError(err error) {
 	log.Printf("error with pubsub connection: %s", err)
 }
