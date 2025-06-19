@@ -11,4 +11,9 @@ func (i *Ingestor) setupEvents() {
 		Type:    "update",
 		Handler: handler.PostSave(i.Clients.PubSub),
 	})
+	i.handle(event.Event{
+		Name:    "PostDelete",
+		Type:    "delete",
+		Handler: handler.PostDelete(i.Clients.PubSub),
+	})
 }

@@ -28,6 +28,7 @@ type MastodonClient interface {
 
 type PubSubClient interface {
 	handler.PostSavePublisher
+	handler.PostDeletePublisher
 }
 
 func New(clients Clients) *Ingestor {
