@@ -6,20 +6,30 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/alexchebotarsky/social/social-aggregator/model/post"
 )
 
 type PostsSelector interface {
-	SelectPosts(ctx context.Context) ([]post.Post, error)
+	SelectPosts(ctx context.Context, limit int) ([]post.Post, error)
 }
 
 func GetPosts(selector PostsSelector) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		// Get posts from the database
-		posts, err := selector.SelectPosts(ctx)
+		limit := 0
+		if r.URL.Query().Get("limit") != "" {
+			var err error
+			limit, err = strconv.Atoi(r.URL.Query().Get("limit"))
+			if err != nil {
+				handleError(ctx, w, fmt.Errorf("invalid `limit` parameter: %v", err), http.StatusBadRequest, false)
+				return
+			}
+		}
+
+		posts, err := selector.SelectPosts(ctx, limit)
 		if err != nil {
 			handleError(ctx, w, fmt.Errorf("error selecting posts"), http.StatusInternalServerError, true)
 			return

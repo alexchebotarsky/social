@@ -8,7 +8,7 @@ import (
 
 func (s *Server) setupRoutes() {
 	s.Router.HandleFunc("GET /_healthz", handler.Health)
-	s.Router.Handle(fmt.Sprintf("GET %s/posts", v1API), handler.GetPosts(s.Clients.Database))
+	s.Router.HandleFunc(fmt.Sprintf("GET %s/posts", v1API), handler.GetPosts(s.Clients.Database))
 }
 
 const v1API = "/api/v1"

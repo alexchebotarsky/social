@@ -7,8 +7,14 @@ import (
 	"github.com/alexchebotarsky/social/social-aggregator/model/post"
 )
 
-func (c *Client) SelectPosts(ctx context.Context) ([]post.Post, error) {
-	query := "SELECT id, created_at, url, language, content FROM posts"
+// SelectPosts retrieves posts in chronological order from the database with a
+// limit. If limit is 0, it retrieves all posts.
+func (c *Client) SelectPosts(ctx context.Context, limit int) ([]post.Post, error) {
+	query := "SELECT id, created_at, url, language, content FROM posts ORDER BY created_at DESC"
+
+	if limit > 0 {
+		query += fmt.Sprintf(" LIMIT %d", limit)
+	}
 
 	posts := []post.Post{}
 	err := c.DB.SelectContext(ctx, &posts, query)
