@@ -1,11 +1,31 @@
 services:
+  social-media-aggregator:
+    build: ./social-media-aggregator/
+    depends_on:
+      - mosquitto
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - PUBSUB_HOST=mosquitto
+      - PUBSUB_PORT=1883
+      - PUBSUB_CLIENT_ID=social-media-aggregator
+      - PUBSUB_QOS=1
+      - DATABASE_PATH=/database/sqlite.db
+    ports:
+      - "8000:8000"
+    volumes:
+      - database-data:/database
+    networks:
+      - network
+    restart: on-failure
+
   mastodon-ingestor:
     build: ./mastodon-ingestor/
     depends_on:
       - mosquitto
     environment:
       - HOST=0.0.0.0
-      - PORT=8000
+      - PORT=8001
       - MASTODON_STREAMING_URL=https://techhub.social/api/v1/streaming/public
       - MASTODON_ACCESS_TOKEN=INSERT_ACCESS_TOKEN_HERE
       - PUBSUB_HOST=mosquitto
@@ -13,34 +33,13 @@ services:
       - PUBSUB_CLIENT_ID=mastodon-ingestor
       - PUBSUB_QOS=1
     ports:
-      - "8000:8000"
-    networks:
-      - network
-    restart: on-failure
-
-  social-media-aggregator:
-    build: ./social-media-aggregator/
-    depends_on:
-      - mosquitto
-    environment:
-      - HOST=0.0.0.0
-      - PORT=8001
-      - PUBSUB_HOST=mosquitto
-      - PUBSUB_PORT=1883
-      - PUBSUB_CLIENT_ID=social-media-aggregator
-      - PUBSUB_QOS=1
-      - DATABASE_PATH=/database/sqlite.db
-    ports:
       - "8001:8001"
-    volumes:
-      - database-data:/database
     networks:
       - network
     restart: on-failure
 
   mosquitto:
     image: eclipse-mosquitto:2.0.21
-    restart: on-failure
     ports:
       - "1883:1883"
     volumes:
@@ -49,6 +48,7 @@ services:
       - mosquitto-data:/mosquitto/data
     networks:
       - network
+    restart: on-failure
 
 networks:
   network:
