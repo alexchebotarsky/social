@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/alexchebotarsky/social/social-aggregator/service/processor/event"
+	"github.com/alexchebotarsky/social/social-aggregator/service/processor/handler"
 )
 
 type Processor struct {
@@ -14,11 +15,16 @@ type Processor struct {
 }
 
 type Clients struct {
-	PubSub PubSubClient
+	PubSub   PubSubClient
+	Database Database
 }
 
 type PubSubClient interface {
 	Subscribe(ctx context.Context, topic string, handler event.Handler) error
+}
+
+type Database interface {
+	handler.PostsInserter
 }
 
 func New(clients Clients) *Processor {

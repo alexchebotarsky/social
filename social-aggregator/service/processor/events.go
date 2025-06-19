@@ -8,6 +8,6 @@ import (
 func (p *Processor) setupEvents() {
 	p.handle(event.Event{
 		Topic:   "social/save-post",
-		Handler: handler.PostSave(),
+		Handler: handler.PostSave(p.Clients.Database),
 	})
 }

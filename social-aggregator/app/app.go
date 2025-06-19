@@ -100,7 +100,8 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 
 	// Processor that handles incoming messages from ingestors
 	processor := processor.New(processor.Clients{
-		PubSub: clients.PubSub,
+		PubSub:   clients.PubSub,
+		Database: clients.Database,
 	})
 	services = append(services, processor)
 
