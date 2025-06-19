@@ -15,7 +15,7 @@ type Server struct {
 	HTTP   *http.Server
 }
 
-func New(host string, port uint16) (*Server, error) {
+func New(host string, port uint16) *Server {
 	var s Server
 
 	s.Host = host
@@ -30,7 +30,7 @@ func New(host string, port uint16) (*Server, error) {
 
 	s.setupRoutes()
 
-	return &s, nil
+	return &s
 }
 
 func (s *Server) Start(ctx context.Context, errc chan<- error) {

@@ -30,7 +30,7 @@ type PubSubClient interface {
 	handler.PostSavePublisher
 }
 
-func New(clients Clients) (*Aggregator, error) {
+func New(clients Clients) *Aggregator {
 	var a Aggregator
 
 	a.Clients = clients
@@ -38,7 +38,7 @@ func New(clients Clients) (*Aggregator, error) {
 	// Setup event handlers
 	a.setupEvents()
 
-	return &a, nil
+	return &a
 }
 
 func (a *Aggregator) Start(ctx context.Context, errc chan<- error) {

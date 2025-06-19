@@ -92,17 +92,13 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 	var services []Service
 
 	// Main HTTP server for communicating with the app
-	server, err := server.New(env.Host, env.Port)
-	if err != nil {
-		return nil, fmt.Errorf("error creating server: %v", err)
-	}
+	server := server.New(env.Host, env.Port)
 	services = append(services, server)
 
 	// Processor that handles incoming messages from ingestors
-	processor, err := processor.New(processor.Clients{PubSub: clients.PubSub})
-	if err != nil {
-		return nil, fmt.Errorf("error creating processor: %v", err)
-	}
+	processor := processor.New(processor.Clients{
+		PubSub: clients.PubSub,
+	})
 	services = append(services, processor)
 
 	return services, nil

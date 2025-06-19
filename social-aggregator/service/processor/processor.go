@@ -21,14 +21,14 @@ type PubSubClient interface {
 	Subscribe(ctx context.Context, topic string, handler event.Handler) error
 }
 
-func New(clients Clients) (*Processor, error) {
+func New(clients Clients) *Processor {
 	var p Processor
 
 	p.Clients = clients
 
 	p.setupEvents()
 
-	return &p, nil
+	return &p
 }
 
 func (p *Processor) Start(ctx context.Context, errc chan<- error) {

@@ -93,20 +93,14 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 	var services []Service
 
 	// Internal server for health checks and other utility endpoints
-	server, err := server.New(env.Host, env.Port)
-	if err != nil {
-		return nil, fmt.Errorf("error creating server: %v", err)
-	}
+	server := server.New(env.Host, env.Port)
 	services = append(services, server)
 
 	// Aggregator service that collects and processes data
-	aggregator, err := aggregator.New(aggregator.Clients{
+	aggregator := aggregator.New(aggregator.Clients{
 		Mastodon: clients.Mastodon,
 		PubSub:   clients.PubSub,
 	})
-	if err != nil {
-		return nil, fmt.Errorf("error creating aggregator: %v", err)
-	}
 	services = append(services, aggregator)
 
 	return services, nil
