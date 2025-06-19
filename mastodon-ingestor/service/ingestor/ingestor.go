@@ -42,11 +42,11 @@ func New(clients Clients) *Ingestor {
 }
 
 func (i *Ingestor) Start(ctx context.Context, errc chan<- error) {
-	log.Printf("Ingestor service started")
-
 	for _, e := range i.events {
 		i.Clients.Mastodon.SubscribeEvent(ctx, e.Type, e.Handler)
 	}
+
+	log.Printf("Ingestor is listening to %d events", len(i.events))
 
 	err := i.Clients.Mastodon.Listen()
 	if !errors.Is(err, context.Canceled) {
