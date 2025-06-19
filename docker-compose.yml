@@ -18,8 +18,8 @@ services:
       - network
     restart: on-failure
 
-  social-aggregator:
-    build: ./social-aggregator/
+  social-media-aggregator:
+    build: ./social-media-aggregator/
     depends_on:
       - mosquitto
     environment:
@@ -27,7 +27,7 @@ services:
       - PORT=8001
       - PUBSUB_HOST=mosquitto
       - PUBSUB_PORT=1883
-      - PUBSUB_CLIENT_ID=social-aggregator
+      - PUBSUB_CLIENT_ID=social-media-aggregator
       - PUBSUB_QOS=1
       - DATABASE_PATH=/database/sqlite.db
     ports:

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/alexchebotarsky/social/social-aggregator/model/post"
+	"github.com/alexchebotarsky/social/social-media-aggregator/model/post"
 )
 
 // SelectPosts retrieves posts in chronological order from the database with a

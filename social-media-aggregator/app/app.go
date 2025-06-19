@@ -8,12 +8,12 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/alexchebotarsky/social/social-aggregator/client"
-	"github.com/alexchebotarsky/social/social-aggregator/client/database"
-	"github.com/alexchebotarsky/social/social-aggregator/client/pubsub"
-	"github.com/alexchebotarsky/social/social-aggregator/env"
-	"github.com/alexchebotarsky/social/social-aggregator/service/processor"
-	"github.com/alexchebotarsky/social/social-aggregator/service/server"
+	"github.com/alexchebotarsky/social/social-media-aggregator/client"
+	"github.com/alexchebotarsky/social/social-media-aggregator/client/database"
+	"github.com/alexchebotarsky/social/social-media-aggregator/client/pubsub"
+	"github.com/alexchebotarsky/social/social-media-aggregator/env"
+	"github.com/alexchebotarsky/social/social-media-aggregator/service/processor"
+	"github.com/alexchebotarsky/social/social-media-aggregator/service/server"
 )
 
 type App struct {

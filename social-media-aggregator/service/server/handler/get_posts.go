@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/alexchebotarsky/social/social-aggregator/model/post"
+	"github.com/alexchebotarsky/social/social-media-aggregator/model/post"
 )
 
 type PostsSelector interface {

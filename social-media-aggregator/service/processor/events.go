@@ -1,8 +1,8 @@
 package processor
 
 import (
-	"github.com/alexchebotarsky/social/social-aggregator/service/processor/event"
-	"github.com/alexchebotarsky/social/social-aggregator/service/processor/handler"
+	"github.com/alexchebotarsky/social/social-media-aggregator/service/processor/event"
+	"github.com/alexchebotarsky/social/social-media-aggregator/service/processor/handler"
 )
 
 func (p *Processor) setupEvents() {

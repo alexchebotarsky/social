@@ -1,4 +1,4 @@
-module github.com/alexchebotarsky/social/social-aggregator
+module github.com/alexchebotarsky/social/social-media-aggregator
 
 go 1.24.3
 

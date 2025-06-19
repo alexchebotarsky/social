@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/alexchebotarsky/social/social-aggregator/client"
+	"github.com/alexchebotarsky/social/social-media-aggregator/client"
 	"github.com/jmoiron/sqlx"
 
 	// sqlite driver

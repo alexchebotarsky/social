@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/alexchebotarsky/social/social-aggregator/app"
-	"github.com/alexchebotarsky/social/social-aggregator/env"
+	"github.com/alexchebotarsky/social/social-media-aggregator/app"
+	"github.com/alexchebotarsky/social/social-media-aggregator/env"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 
-	"github.com/alexchebotarsky/social/social-aggregator/service/server/handler"
+	"github.com/alexchebotarsky/social/social-media-aggregator/service/server/handler"
 )
 
 func (s *Server) setupRoutes() {
