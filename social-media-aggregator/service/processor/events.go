@@ -10,4 +10,8 @@ func (p *Processor) setupEvents() {
 		Topic:   "social/save-post",
 		Handler: handler.PostSave(p.Clients.Database),
 	})
+	p.handle(event.Event{
+		Topic:   "social/delete-post",
+		Handler: handler.PostDelete(p.Clients.Database),
+	})
 }

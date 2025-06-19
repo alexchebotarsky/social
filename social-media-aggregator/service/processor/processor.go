@@ -25,6 +25,7 @@ type PubSubClient interface {
 
 type DatabaseClient interface {
 	handler.PostsInserter
+	handler.PostsDeleter
 }
 
 func New(clients Clients) *Processor {

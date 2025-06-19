@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/alexchebotarsky/social/social-media-aggregator/client"
 	"github.com/alexchebotarsky/social/social-media-aggregator/model/post"
 )
 
@@ -41,6 +42,34 @@ func (c *Client) InsertPost(ctx context.Context, p *post.Post) error {
 	_, err := c.DB.NamedExecContext(ctx, query, p)
 	if err != nil {
 		return fmt.Errorf("error inserting post: %v", err)
+	}
+
+	return nil
+}
+
+// DeletePost deletes a post by its ID from the database. If the post does not
+// exist, it returns a not found error.
+func (c *Client) DeletePost(ctx context.Context, id string) error {
+	query := `DELETE FROM posts WHERE id = :id`
+
+	args := struct {
+		ID string `db:"id"`
+	}{
+		ID: id,
+	}
+
+	result, err := c.DB.NamedExecContext(ctx, query, args)
+	if err != nil {
+		return fmt.Errorf("error deleting post with id %s: %v", id, err)
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("error getting affected rows: %v", err)
+	}
+
+	if rows == 0 {
+		return &client.ErrNotFound{Err: fmt.Errorf("no post with id %s to delete", id)}
 	}
 
 	return nil
