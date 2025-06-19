@@ -18,6 +18,17 @@ services:
       - network
     restart: on-failure
 
+  social-aggregator:
+    build: ./social-aggregator/
+    depends_on:
+      - mosquitto
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8001
+    networks:
+      - network
+    restart: on-failure
+
   mosquitto:
     image: eclipse-mosquitto:2.0.21
     restart: on-failure
