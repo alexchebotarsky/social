@@ -8,12 +8,12 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/alexchebotarsky/social/mastodon-aggregator/client"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/client/mastodon"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/client/pubsub"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/env"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/service/aggregator"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/service/server"
+	"github.com/alexchebotarsky/social/mastodon-ingestor/client"
+	"github.com/alexchebotarsky/social/mastodon-ingestor/client/mastodon"
+	"github.com/alexchebotarsky/social/mastodon-ingestor/client/pubsub"
+	"github.com/alexchebotarsky/social/mastodon-ingestor/env"
+	"github.com/alexchebotarsky/social/mastodon-ingestor/service/ingestor"
+	"github.com/alexchebotarsky/social/mastodon-ingestor/service/server"
 )
 
 type App struct {
@@ -96,12 +96,12 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 	server := server.New(env.Host, env.Port)
 	services = append(services, server)
 
-	// Aggregator service that collects and processes data
-	aggregator := aggregator.New(aggregator.Clients{
+	// Ingestor service that collects and processes data
+	ingestor := ingestor.New(ingestor.Clients{
 		Mastodon: clients.Mastodon,
 		PubSub:   clients.PubSub,
 	})
-	services = append(services, aggregator)
+	services = append(services, ingestor)
 
 	return services, nil
 }

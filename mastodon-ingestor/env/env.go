@@ -19,7 +19,7 @@ type Config struct {
 
 	PubSubHost     string `env:"PUBSUB_HOST,default=localhost"`
 	PubSubPort     uint16 `env:"PUBSUB_PORT,default=1883"`
-	PubSubClientID string `env:"PUBSUB_CLIENT_ID,default=mastodon-aggregator"`
+	PubSubClientID string `env:"PUBSUB_CLIENT_ID,default=mastodon-ingestor"`
 	PubSubQoS      byte   `env:"PUBSUB_QOS,default=1"`
 }
 

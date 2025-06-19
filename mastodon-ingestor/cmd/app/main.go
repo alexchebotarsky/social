@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/alexchebotarsky/social/mastodon-aggregator/app"
-	"github.com/alexchebotarsky/social/mastodon-aggregator/env"
+	"github.com/alexchebotarsky/social/mastodon-ingestor/app"
+	"github.com/alexchebotarsky/social/mastodon-ingestor/env"
 )
 
 func main() {

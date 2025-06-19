@@ -1,6 +1,6 @@
 services:
-  mastodon-aggregator:
-    build: ./mastodon-aggregator/
+  mastodon-ingestor:
+    build: ./mastodon-ingestor/
     depends_on:
       - mosquitto
     environment:
@@ -10,7 +10,7 @@ services:
       - MASTODON_ACCESS_TOKEN=INSERT_ACCESS_TOKEN_HERE
       - PUBSUB_HOST=mosquitto
       - PUBSUB_PORT=1883
-      - PUBSUB_CLIENT_ID=mastodon-aggregator
+      - PUBSUB_CLIENT_ID=mastodon-ingestor
       - PUBSUB_QOS=1
     ports:
       - "8000:8000"

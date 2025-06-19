@@ -1,4 +1,4 @@
-module github.com/alexchebotarsky/social/mastodon-aggregator
+module github.com/alexchebotarsky/social/mastodon-ingestor
 
 go 1.24.3
 
