@@ -25,6 +25,10 @@ services:
     environment:
       - HOST=0.0.0.0
       - PORT=8001
+      - PUBSUB_HOST=mosquitto
+      - PUBSUB_PORT=1883
+      - PUBSUB_CLIENT_ID=social-aggregator
+      - PUBSUB_QOS=1
     networks:
       - network
     restart: on-failure

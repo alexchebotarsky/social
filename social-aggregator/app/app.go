@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/alexchebotarsky/social/social-aggregator/client"
+	"github.com/alexchebotarsky/social/social-aggregator/client/pubsub"
 	"github.com/alexchebotarsky/social/social-aggregator/env"
+	"github.com/alexchebotarsky/social/social-aggregator/service/processor"
 	"github.com/alexchebotarsky/social/social-aggregator/service/server"
 )
 
@@ -96,15 +98,29 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 	}
 	services = append(services, server)
 
+	// Processor that handles incoming messages from ingestors
+	processor, err := processor.New(processor.Clients{PubSub: clients.PubSub})
+	if err != nil {
+		return nil, fmt.Errorf("error creating processor: %v", err)
+	}
+	services = append(services, processor)
+
 	return services, nil
 }
 
 // Clients holds implementations of all external clients used in the app
 type Clients struct {
+	PubSub *pubsub.PubSub
 }
 
 func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
 	var c Clients
+	var err error
+
+	c.PubSub, err = pubsub.New(ctx, env.PubSubHost, env.PubSubPort, env.PubSubClientID, env.PubSubQoS)
+	if err != nil {
+		return nil, fmt.Errorf("error creating PubSub client: %v", err)
+	}
 
 	return &c, nil
 }
