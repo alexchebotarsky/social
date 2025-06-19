@@ -19,10 +19,10 @@ type Server struct {
 }
 
 type Clients struct {
-	Database Database
+	Database DatabaseClient
 }
 
-type Database interface {
+type DatabaseClient interface {
 	handler.PostsSelector
 }
 

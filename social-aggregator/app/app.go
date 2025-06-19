@@ -110,7 +110,7 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 
 // Clients holds implementations of all external clients used in the app
 type Clients struct {
-	PubSub   *pubsub.PubSub
+	PubSub   *pubsub.Client
 	Database *database.Client
 }
 
