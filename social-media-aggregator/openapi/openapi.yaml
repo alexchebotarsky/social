@@ -1,0 +1,92 @@
+openapi: 3.1.0
+
+info:
+  title: social-media-aggregator
+  description: |
+    API for aggregating and querying social-media posts
+  version: 1.0.0
+
+paths:
+  /api/v1/posts:
+    get:
+      summary: Get aggregated posts
+      parameters:
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "Bad Request: 400"
+                statusCode: 400
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "Internal Server Error: 500"
+                statusCode: 500
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        statusCode:
+          type: integer
+          description: HTTP status code
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the post
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the post was created
+        url:
+          type: string
+          format: uri
+          description: URL of the post
+        language:
+          type: string
+          description: Language of the post
+        content:
+          type: string
+          description: Contents of the post
+      example:
+        id: "114714528942008474"
+        created_at: "2025-06-20T07:33:19.000Z"
+        url: "https://mastodon.social/@UserName/114714528936167563"
+        language: "en"
+        content: "<p>Some paragraph here</p>"
+
+  parameters:
+    limit:
+      in: query
+      name: limit
+      required: false
+      description: |
+        The maximum number of results to return.
+        0 means no limit.
+      schema:
+        type: integer
+        default: 0
+        example: 100

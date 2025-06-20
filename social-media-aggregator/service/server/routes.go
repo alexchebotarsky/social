@@ -8,6 +8,9 @@ import (
 
 func (s *Server) setupRoutes() {
 	s.Router.HandleFunc("GET /_healthz", handler.Health)
+	s.Router.HandleFunc("/openapi.yaml", handler.OpenAPIYaml)
+	s.Router.HandleFunc("/docs", handler.SwaggerUI)
+
 	s.Router.HandleFunc(fmt.Sprintf("GET %s/posts", v1API), handler.GetPosts(s.Clients.Database))
 }
 

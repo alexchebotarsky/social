@@ -38,3 +38,8 @@ Simple, containerized and self-contained social media aggregator.
   presumably due to high load. All of the documentation that is related to
   `mastodon.social`, also true for `techhub.social`, so I assumed them to be
   equal for this project.
+
+### OpenAPI
+
+`social-media-aggregator` has OpenAPI documentation hosted under
+`localhost:8000/docs`, explaining the API for querying the aggregated posts.
