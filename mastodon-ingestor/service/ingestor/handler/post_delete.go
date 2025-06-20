@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/alexchebotarsky/social/mastodon-ingestor/service/ingestor/event"
 )
@@ -12,13 +12,14 @@ type PostDeletePublisher interface {
 }
 
 func PostDelete(publisher PostDeletePublisher) event.Handler {
-	return func(ctx context.Context, data []byte) {
+	return func(ctx context.Context, data []byte) error {
 		postID := string(data)
 
 		err := publisher.PublishPostDelete(ctx, postID)
 		if err != nil {
-			log.Printf("Error publishing post for delete: %v", err)
-			return
+			return fmt.Errorf("error publishing post for delete: %v", err)
 		}
+
+		return nil
 	}
 }

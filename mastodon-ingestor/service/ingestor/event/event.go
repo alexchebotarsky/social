@@ -10,4 +10,4 @@ type Event struct {
 	Handler Handler
 }
 
-type Handler = func(context.Context, []byte)
+type Handler = func(context.Context, []byte) error

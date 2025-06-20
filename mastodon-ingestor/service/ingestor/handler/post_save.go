@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"fmt"
 
 	"github.com/alexchebotarsky/social/mastodon-ingestor/model/post"
 	"github.com/alexchebotarsky/social/mastodon-ingestor/service/ingestor/event"
@@ -14,18 +14,18 @@ type PostSavePublisher interface {
 }
 
 func PostSave(publisher PostSavePublisher) event.Handler {
-	return func(ctx context.Context, data []byte) {
+	return func(ctx context.Context, data []byte) error {
 		var post post.Post
 		err := json.Unmarshal(data, &post)
 		if err != nil {
-			log.Printf("Error unmarshalling post data: %v", err)
-			return
+			return fmt.Errorf("error unmarshalling post data: %v", err)
 		}
 
 		err = publisher.PublishPostSave(ctx, &post)
 		if err != nil {
-			log.Printf("Error publishing post for save: %v", err)
-			return
+			return fmt.Errorf("error publishing post for save: %v", err)
 		}
+
+		return nil
 	}
 }

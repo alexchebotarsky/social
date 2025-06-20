@@ -22,7 +22,7 @@ type Clients struct {
 }
 
 type MastodonClient interface {
-	SubscribeEvent(ctx context.Context, eventType string, handler event.Handler)
+	SubscribeEvent(ctx context.Context, eventType string, handler func(ctx context.Context, data []byte))
 	Listen() error
 }
 
@@ -44,7 +44,12 @@ func New(clients Clients) *Ingestor {
 
 func (i *Ingestor) Start(ctx context.Context, errc chan<- error) {
 	for _, e := range i.events {
-		i.Clients.Mastodon.SubscribeEvent(ctx, e.Type, e.Handler)
+		i.Clients.Mastodon.SubscribeEvent(ctx, e.Type, func(ctx context.Context, data []byte) {
+			err := e.Handler(ctx, data)
+			if err != nil {
+				errc <- fmt.Errorf("error handling event %s: %v", e.Type, err)
+			}
+		})
 	}
 
 	log.Printf("Ingestor is listening to %d events", len(i.events))
