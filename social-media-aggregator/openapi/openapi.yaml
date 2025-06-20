@@ -39,6 +39,16 @@ paths:
               example:
                 error: "Internal Server Error: 500"
                 statusCode: 500
+  /api/v1/posts/stream:
+    get:
+      summary: Stream aggregated posts in real-time
+      responses:
+        "200":
+          description: Successful SSE stream
+          content:
+            text/event-stream:
+              schema:
+                $ref: "#/components/schemas/Post"
 
 components:
   schemas:

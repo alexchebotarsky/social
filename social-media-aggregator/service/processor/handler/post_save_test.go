@@ -27,16 +27,34 @@ func (f *fakePostInserter) InsertPost(ctx context.Context, post *post.Post) erro
 	return nil
 }
 
+type mockPostPublisher struct {
+	PublishCounter int
+
+	shouldFail bool
+}
+
+func (f *mockPostPublisher) PublishPost(post *post.Post) error {
+	if f.shouldFail {
+		return errors.New("test error")
+	}
+
+	f.PublishCounter += 1
+
+	return nil
+}
+
 func TestPostSave(t *testing.T) {
 	type args struct {
-		inserter *fakePostInserter
-		payload  []byte
+		inserter  *fakePostInserter
+		publisher *mockPostPublisher
+		payload   []byte
 	}
 	tests := []struct {
-		name      string
-		args      args
-		wantErr   bool
-		wantPosts []post.Post
+		name               string
+		args               args
+		wantErr            bool
+		wantPublishCounter int
+		wantPosts          []post.Post
 	}{
 		{
 			name: "should save post",
@@ -53,6 +71,9 @@ func TestPostSave(t *testing.T) {
 					},
 					shouldFail: false,
 				},
+				publisher: &mockPostPublisher{
+					shouldFail: false,
+				},
 				payload: []byte(`{
 					"id": "another-post-id",
 					"content": "Another content",
@@ -61,7 +82,8 @@ func TestPostSave(t *testing.T) {
 					"language": "en"
 				}`),
 			},
-			wantErr: false,
+			wantErr:            false,
+			wantPublishCounter: 1,
 			wantPosts: []post.Post{
 				{
 					ID:        "test-post-id",
@@ -94,6 +116,9 @@ func TestPostSave(t *testing.T) {
 					},
 					shouldFail: true,
 				},
+				publisher: &mockPostPublisher{
+					shouldFail: false,
+				},
 				payload: []byte(`{
 					"id": "another-post-id",
 					"content": "Another content",
@@ -102,11 +127,57 @@ func TestPostSave(t *testing.T) {
 					"language": "en"
 				}`),
 			},
-			wantErr: true,
+			wantErr:            true,
+			wantPublishCounter: 0,
 			wantPosts: []post.Post{
 				{
 					ID:        "test-post-id",
 					Content:   "Test content",
+					CreatedAt: "2025-06-20T07:33:19.000Z",
+					URL:       "https://mastodon.social/@UserName/114714528936167563",
+					Language:  "en",
+				},
+			},
+		},
+		{
+			name: "should return error if failed to publish post",
+			args: args{
+				inserter: &fakePostInserter{
+					Posts: []post.Post{
+						{
+							ID:        "test-post-id",
+							Content:   "Test content",
+							CreatedAt: "2025-06-20T07:33:19.000Z",
+							URL:       "https://mastodon.social/@UserName/114714528936167563",
+							Language:  "en",
+						},
+					},
+					shouldFail: false,
+				},
+				publisher: &mockPostPublisher{
+					shouldFail: true,
+				},
+				payload: []byte(`{
+					"id": "another-post-id",
+					"content": "Another content",
+					"created_at": "2025-06-20T07:33:19.000Z",
+					"url": "https://mastodon.social/@UserName/114714528936167563",
+					"language": "en"
+				}`),
+			},
+			wantErr:            true,
+			wantPublishCounter: 0,
+			wantPosts: []post.Post{
+				{
+					ID:        "test-post-id",
+					Content:   "Test content",
+					CreatedAt: "2025-06-20T07:33:19.000Z",
+					URL:       "https://mastodon.social/@UserName/114714528936167563",
+					Language:  "en",
+				},
+				{
+					ID:        "another-post-id",
+					Content:   "Another content",
 					CreatedAt: "2025-06-20T07:33:19.000Z",
 					URL:       "https://mastodon.social/@UserName/114714528936167563",
 					Language:  "en",
@@ -128,6 +199,9 @@ func TestPostSave(t *testing.T) {
 					},
 					shouldFail: false,
 				},
+				publisher: &mockPostPublisher{
+					shouldFail: false,
+				},
 				payload: []byte(`{
 					"id": "another-post-id",
 					"content": "Another content",
@@ -136,7 +210,8 @@ func TestPostSave(t *testing.T) {
 					"language":
 				}`),
 			},
-			wantErr: true,
+			wantErr:            true,
+			wantPublishCounter: 0,
 			wantPosts: []post.Post{
 				{
 					ID:        "test-post-id",
@@ -162,6 +237,9 @@ func TestPostSave(t *testing.T) {
 					},
 					shouldFail: false,
 				},
+				publisher: &mockPostPublisher{
+					shouldFail: false,
+				},
 				payload: []byte(`{
 					"id": "",
 					"content": "",
@@ -170,7 +248,8 @@ func TestPostSave(t *testing.T) {
 					"language": ""
 				}`),
 			},
-			wantErr: true,
+			wantErr:            true,
+			wantPublishCounter: 0,
 			wantPosts: []post.Post{
 				{
 					ID:        "test-post-id",
@@ -184,7 +263,7 @@ func TestPostSave(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			handler := PostSave(tt.args.inserter)
+			handler := PostSave(tt.args.inserter, tt.args.publisher)
 			err := handler(context.Background(), tt.args.payload)
 
 			if (err != nil) != tt.wantErr {
@@ -193,6 +272,10 @@ func TestPostSave(t *testing.T) {
 
 			if !reflect.DeepEqual(tt.args.inserter.Posts, tt.wantPosts) {
 				t.Errorf("PostSave() posts = %v, want %v", tt.args.inserter.Posts, tt.wantPosts)
+			}
+
+			if tt.args.publisher.PublishCounter != tt.wantPublishCounter {
+				t.Errorf("PostSave() publish counter = %d, want %d", tt.args.publisher.PublishCounter, tt.wantPublishCounter)
 			}
 		})
 	}

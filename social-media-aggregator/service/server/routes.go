@@ -12,6 +12,7 @@ func (s *Server) setupRoutes() {
 	s.Router.HandleFunc("/docs", handler.SwaggerUI)
 
 	s.Router.HandleFunc(fmt.Sprintf("GET %s/posts", v1API), handler.GetPosts(s.Clients.Database))
+	s.Router.Handle(fmt.Sprintf("GET %s/posts/stream", v1API), s.Clients.PostStream.Handler())
 }
 
 const v1API = "/api/v1"

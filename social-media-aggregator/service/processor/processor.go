@@ -15,8 +15,9 @@ type Processor struct {
 }
 
 type Clients struct {
-	PubSub   PubSubClient
-	Database DatabaseClient
+	PubSub     PubSubClient
+	Database   DatabaseClient
+	PostStream PostStreamClient
 }
 
 type PubSubClient interface {
@@ -26,6 +27,10 @@ type PubSubClient interface {
 type DatabaseClient interface {
 	handler.PostsInserter
 	handler.PostsDeleter
+}
+
+type PostStreamClient interface {
+	handler.PostsPublisher
 }
 
 func New(clients Clients) *Processor {

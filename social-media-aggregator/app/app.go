@@ -10,6 +10,7 @@ import (
 
 	"github.com/alexchebotarsky/social/social-media-aggregator/client"
 	"github.com/alexchebotarsky/social/social-media-aggregator/client/database"
+	"github.com/alexchebotarsky/social/social-media-aggregator/client/poststream"
 	"github.com/alexchebotarsky/social/social-media-aggregator/client/pubsub"
 	"github.com/alexchebotarsky/social/social-media-aggregator/env"
 	"github.com/alexchebotarsky/social/social-media-aggregator/service/processor"
@@ -71,7 +72,7 @@ func (app *App) Launch(ctx context.Context) {
 	}
 
 	// Shut down all clients gracefully
-	err := app.Clients.Close()
+	err := app.Clients.Close(ctx)
 	if err != nil {
 		errors = append(errors, fmt.Errorf("error closing app clients: %v", err))
 	}
@@ -94,14 +95,16 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 
 	// Main HTTP server for communicating with the app
 	server := server.New(env.Host, env.Port, server.Clients{
-		Database: clients.Database,
+		Database:   clients.Database,
+		PostStream: clients.PostStream,
 	})
 	services = append(services, server)
 
 	// Processor that handles incoming messages from ingestors
 	processor := processor.New(processor.Clients{
-		PubSub:   clients.PubSub,
-		Database: clients.Database,
+		PubSub:     clients.PubSub,
+		Database:   clients.Database,
+		PostStream: clients.PostStream,
 	})
 	services = append(services, processor)
 
@@ -110,8 +113,9 @@ func setupServices(ctx context.Context, env *env.Config, clients *Clients) ([]Se
 
 // Clients holds implementations of all external clients used in the app
 type Clients struct {
-	PubSub   *pubsub.Client
-	Database *database.Client
+	PubSub     *pubsub.Client
+	Database   *database.Client
+	PostStream *poststream.Client
 }
 
 func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
@@ -128,11 +132,18 @@ func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
 		return nil, fmt.Errorf("error creating database client: %v", err)
 	}
 
+	c.PostStream = poststream.New()
+
 	return &c, nil
 }
 
-func (c *Clients) Close() error {
+func (c *Clients) Close(ctx context.Context) error {
 	var errors []error
+
+	err := c.PostStream.Close(ctx)
+	if err != nil {
+		errors = append(errors, fmt.Errorf("error closing post stream client: %v", err))
+	}
 
 	if len(errors) > 0 {
 		return &client.ErrMultiple{Errs: errors}

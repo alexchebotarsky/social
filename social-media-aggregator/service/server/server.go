@@ -19,11 +19,16 @@ type Server struct {
 }
 
 type Clients struct {
-	Database DatabaseClient
+	Database   DatabaseClient
+	PostStream PostStreamClient
 }
 
 type DatabaseClient interface {
 	handler.PostsSelector
+}
+
+type PostStreamClient interface {
+	Handler() http.Handler
 }
 
 func New(host string, port uint16, clients Clients) *Server {
