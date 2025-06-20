@@ -43,16 +43,40 @@ func TestPostSave(t *testing.T) {
 			args: args{
 				inserter: &fakePostInserter{
 					Posts: []post.Post{
-						{ID: "test-post-id", Content: "Test content"},
+						{
+							ID:        "test-post-id",
+							Content:   "Test content",
+							CreatedAt: "2025-06-20T07:33:19.000Z",
+							URL:       "https://mastodon.social/@UserName/114714528936167563",
+							Language:  "en",
+						},
 					},
 					shouldFail: false,
 				},
-				payload: []byte(`{"id":"another-post-id","content":"Another content"}`),
+				payload: []byte(`{
+					"id": "another-post-id",
+					"content": "Another content",
+					"created_at": "2025-06-20T07:33:19.000Z",
+					"url": "https://mastodon.social/@UserName/114714528936167563",
+					"language": "en"
+				}`),
 			},
 			wantErr: false,
 			wantPosts: []post.Post{
-				{ID: "test-post-id", Content: "Test content"},
-				{ID: "another-post-id", Content: "Another content"},
+				{
+					ID:        "test-post-id",
+					Content:   "Test content",
+					CreatedAt: "2025-06-20T07:33:19.000Z",
+					URL:       "https://mastodon.social/@UserName/114714528936167563",
+					Language:  "en",
+				},
+				{
+					ID:        "another-post-id",
+					Content:   "Another content",
+					CreatedAt: "2025-06-20T07:33:19.000Z",
+					URL:       "https://mastodon.social/@UserName/114714528936167563",
+					Language:  "en",
+				},
 			},
 		},
 		{
@@ -60,15 +84,33 @@ func TestPostSave(t *testing.T) {
 			args: args{
 				inserter: &fakePostInserter{
 					Posts: []post.Post{
-						{ID: "test-post-id", Content: "Test content"},
+						{
+							ID:        "test-post-id",
+							Content:   "Test content",
+							CreatedAt: "2025-06-20T07:33:19.000Z",
+							URL:       "https://mastodon.social/@UserName/114714528936167563",
+							Language:  "en",
+						},
 					},
 					shouldFail: true,
 				},
-				payload: []byte(`{"id":"another-post-id","content":"Another content"}`),
+				payload: []byte(`{
+					"id": "another-post-id",
+					"content": "Another content",
+					"created_at": "2025-06-20T07:33:19.000Z",
+					"url": "https://mastodon.social/@UserName/114714528936167563",
+					"language": "en"
+				}`),
 			},
 			wantErr: true,
 			wantPosts: []post.Post{
-				{ID: "test-post-id", Content: "Test content"},
+				{
+					ID:        "test-post-id",
+					Content:   "Test content",
+					CreatedAt: "2025-06-20T07:33:19.000Z",
+					URL:       "https://mastodon.social/@UserName/114714528936167563",
+					Language:  "en",
+				},
 			},
 		},
 		{
@@ -76,15 +118,67 @@ func TestPostSave(t *testing.T) {
 			args: args{
 				inserter: &fakePostInserter{
 					Posts: []post.Post{
-						{ID: "test-post-id", Content: "Test content"},
+						{
+							ID:        "test-post-id",
+							Content:   "Test content",
+							CreatedAt: "2025-06-20T07:33:19.000Z",
+							URL:       "https://mastodon.social/@UserName/114714528936167563",
+							Language:  "en",
+						},
 					},
 					shouldFail: false,
 				},
-				payload: []byte(`{"id":"another-post-id","content":}`),
+				payload: []byte(`{
+					"id": "another-post-id",
+					"content": "Another content",
+					"created_at": "2025-06-20T07:33:19.000Z",
+					"url": "https://mastodon.social/@UserName/114714528936167563",
+					"language":
+				}`),
 			},
 			wantErr: true,
 			wantPosts: []post.Post{
-				{ID: "test-post-id", Content: "Test content"},
+				{
+					ID:        "test-post-id",
+					Content:   "Test content",
+					CreatedAt: "2025-06-20T07:33:19.000Z",
+					URL:       "https://mastodon.social/@UserName/114714528936167563",
+					Language:  "en",
+				},
+			},
+		},
+		{
+			name: "should return error if post is invalid",
+			args: args{
+				inserter: &fakePostInserter{
+					Posts: []post.Post{
+						{
+							ID:        "test-post-id",
+							Content:   "Test content",
+							CreatedAt: "2025-06-20T07:33:19.000Z",
+							URL:       "https://mastodon.social/@UserName/114714528936167563",
+							Language:  "en",
+						},
+					},
+					shouldFail: false,
+				},
+				payload: []byte(`{
+					"id": "",
+					"content": "",
+					"created_at": "",
+					"url": "",
+					"language": ""
+				}`),
+			},
+			wantErr: true,
+			wantPosts: []post.Post{
+				{
+					ID:        "test-post-id",
+					Content:   "Test content",
+					CreatedAt: "2025-06-20T07:33:19.000Z",
+					URL:       "https://mastodon.social/@UserName/114714528936167563",
+					Language:  "en",
+				},
 			},
 		},
 	}

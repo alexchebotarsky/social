@@ -21,6 +21,11 @@ func PostSave(inserter PostsInserter) event.Handler {
 			return fmt.Errorf("error unmarshalling post: %v", err)
 		}
 
+		err = post.Validate()
+		if err != nil {
+			return fmt.Errorf("error validating post: %v", err)
+		}
+
 		err = inserter.InsertPost(ctx, &post)
 		if err != nil {
 			return fmt.Errorf("error inserting post: %v", err)
