@@ -2,13 +2,13 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"time"
 
-	"github.com/alexchebotarsky/social/social-media-aggregator/client"
 	"github.com/alexchebotarsky/social/social-media-aggregator/client/database"
 	"github.com/alexchebotarsky/social/social-media-aggregator/client/poststream"
 	"github.com/alexchebotarsky/social/social-media-aggregator/client/pubsub"
@@ -59,7 +59,7 @@ func (app *App) Launch(ctx context.Context) {
 	}
 
 	// Shut down all services gracefully
-	var errors []error
+	var errs []error
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -67,18 +67,18 @@ func (app *App) Launch(ctx context.Context) {
 	for _, service := range app.Services {
 		err := service.Stop(ctx)
 		if err != nil {
-			errors = append(errors, fmt.Errorf("error stopping a service: %v", err))
+			errs = append(errs, fmt.Errorf("error stopping a service: %v", err))
 		}
 	}
 
 	// Shut down all clients gracefully
 	err := app.Clients.Close(ctx)
 	if err != nil {
-		errors = append(errors, fmt.Errorf("error closing app clients: %v", err))
+		errs = append(errs, fmt.Errorf("error closing app clients: %v", err))
 	}
 
-	if len(errors) > 0 {
-		log.Printf("Error gracefully shutting down: %v", &client.ErrMultiple{Errs: errors})
+	if len(errs) > 0 {
+		log.Printf("Error gracefully shutting down: %v", errors.Join(errs...))
 	} else {
 		log.Print("App has been gracefully shut down")
 	}
@@ -138,15 +138,15 @@ func setupClients(ctx context.Context, env *env.Config) (*Clients, error) {
 }
 
 func (c *Clients) Close(ctx context.Context) error {
-	var errors []error
+	var errs []error
 
 	err := c.PostStream.Close(ctx)
 	if err != nil {
-		errors = append(errors, fmt.Errorf("error closing post stream client: %v", err))
+		errs = append(errs, fmt.Errorf("error closing post stream client: %v", err))
 	}
 
-	if len(errors) > 0 {
-		return &client.ErrMultiple{Errs: errors}
+	if len(errs) > 0 {
+		return errors.Join(errs...)
 	}
 
 	return nil

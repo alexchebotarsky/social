@@ -2,9 +2,9 @@ package database
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
-	"github.com/alexchebotarsky/social/social-media-aggregator/client"
 	"github.com/jmoiron/sqlx"
 
 	// sqlite driver
@@ -60,7 +60,7 @@ func (c *Client) Close() error {
 	}
 
 	if len(errs) > 0 {
-		return &client.ErrMultiple{Errs: errs}
+		return errors.Join(errs...)
 	}
 
 	return nil
