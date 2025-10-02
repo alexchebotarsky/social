@@ -4,13 +4,15 @@ import (
 	"context"
 	"log"
 	"os"
+	"os/signal"
 
 	"github.com/alexchebotarsky/social/social-media-aggregator/app"
 	"github.com/alexchebotarsky/social/social-media-aggregator/env"
 )
 
 func main() {
-	ctx := context.Background()
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
+	defer cancel()
 
 	env, err := env.LoadConfig(ctx)
 	if err != nil {
